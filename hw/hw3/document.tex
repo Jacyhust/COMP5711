@@ -1,0 +1,82 @@
+\documentclass[12pt,onecolumn,a4paper]{article}
+%landscape：横排
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{CJKutf8}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{graphicx} 
+\usepackage{natbib}
+\usepackage{caption}
+\usepackage{subfigure}
+\usepackage{subfig}
+\usepackage{color}
+\usepackage{booktabs}
+
+%\usepackage{times}
+
+\usepackage[justification=centering]{caption}%图片标题居中
+
+%\usepackage{algorithm}  
+%\usepackage{algorithmicx}  
+%\usepackage{algpseudocode} 
+
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+%\floatname{algorithm}{Algorithm} 
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}  
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+
+\newtheorem{definition}{定义}[section]
+\newtheorem{proof}{Proof}
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{question}{Question}[section]
+\newtheorem{Symbol}{Symbol}[section]
+%\setlength{\parindent}{2em}
+\geometry{left=2cm,right=2cm,top=2.5cm,bottom=2.5cm}
+\def\cmt{\textcolor{blue}}
+\def\todo{\textcolor{red}}
+\def\cbl{\textcolor{blue}}
+\newcommand{\DD}{\mathrm{\mathcal{D}}}
+\newcommand{\HH}{\mathrm{\mathcal{H}}}
+\newcommand{\aka}{\emph{a.k.a.}\xspace}
+\DeclareMathOperator{\E}{E}
+\title{\textbf{COMP 5711 - Advanced Algorithms} \ \textbf{Written Assignment \# 3}}
+\author{ZHAO, Xi \\12256508 \\xzhaoca@connect.ust.hk}
+%\date{Nov 2018}
+\begin{document}
+\maketitle
+
+%\section*{Amortized Analysis (CLRS Ch 17)}
+\subsection*{MR8.22}
+Let $x$ and$x$ be two distinct elements of $U$. $|H|=p-1$, we count the number of $a$, $N_a$, such that $h_a(x)=h_a(y)$, then show that $N_a/(p-1)\le 2/n$.
+Assume $h_a(x)=t$ and $ax=u \mod p$, for a $y\neq x$ in $[u]$, let $ay=v \mod p$. Since $u=v=t\mod n$, for each value of $t$, $v\in [p]$ can take at most $\lceil p/n \rceil\le p/n$ different values. So, $N_a/(p-1)\le (p/n)/(p-1)\le 2/n.$
+
+\subsection*{RIC}
+In this list structure, each node $x$ may have multiple successor nodes $y$ (that is, $ y $ are inserted after $x$) such that $x<y$ and there is only a head node (the smallest element) when the list is not empty. To insert a new element $a$, we find the node $t$ such that $a$ should be inserted after $t$. We first consider the head node $h$ in the list as $t$ and compare whether $a<t$. If so, $a$ should be the new head node and we maintain the pointers between $a$ and $h$; otherwise, we compare $a$ and all of $t$'s successors $y$s and $a$. If no $y$ in $t$'s successors is less than $a$, we find the required $t$ and insert $a$ after $t$;
+otherwise, there exists a $y$ that $y<o$, we consider the largest such $y$ as the next $t$ and repeat this procedure.
+
+\textbf{Running Time:} We denote the layer of a node $a$ as the length of path from the head node $h$ to $a$. As the elements are inserted in a random order, the expected layer of the $i$-th largest points in the array is $O(\log i)$ and each node has expected $O(1)$ successor. So, the expected time of inserting an element is $O(\log n)$ and all the running time is $O(n\log n)$.
+\subsection*{KT13.14}
+We independently assign each process $i$ a label $L_i$ as $0$ or $1$ randomly. For a job $J$, we assign each process $i$ in $J$'s $2n$ processes to machine $M_1$ if $L_i$ is 0 and to machine $M_2$ if $L_i$ is 1. 
+Denote $L=\sum_{t\in J}^{ } L_t$ and $\E L=n$, the probability that the assignment in $J$ is not nearly balanced is $p=\Pr[L>4n/3]+\Pr[L<2n/3]\le 2\exp(-n/3)$ according to the Chernoff inequality. So, the probability that any of $n$ jobs is not nearly balanced is at most $p_t=np\le 2n\exp(-n/3)$. We can find an enough large $n$ to make $P-t\le 0.5$ since $f(n)=2n\exp(-n/3)$ decreases with $n$ and $f(+\infty)=0$.
+
+After such an assignment, we check whether all jobs are nearly balanced, which takes $O(n^2)$ time. If not, we repeat such a process. The expected repeated number is $1/p_t=2$. So, the expected running time is still polynomial with $n$.
+
+
+\subsection*{KT13.15}
+We imagine dividing the set $S$ into $2L+1$ quantiles $Q_i,Q_2,\cdots,Q_{2L+1}$, and each quantile contains at least $n_i=\lfloor n/(2L+1)\rfloor$ points. We randomly choose $(2L+1)b$ points from $S$ as sampling set $S'$. So, the expected number of points falling in a quantile is $\E X=b$. Given a small positive number $t$, $$p=\Pr[|X-\E X|\ge t\E X]\le 2\exp(-bt^2/3)$$ according to the Chernoff inequality. If such a condition satisfies in all $2L$ quantiles expect for the median quantiles $Q_{L+1}$, the first $L$ quantiles will have at most $(1+t)Lb$ points in $S'$ and the last $L$ quantiles will have at most $(1+t)Lb$ points in $S'$ too. By setting $b$ such that $$Lb<(1+t)Lb\le(1+L)b,$$
+the median of $S'$ will belong to $Q_{L+1}$. In this case, $t\le 1/L$. Then, to make sure any point in $Q_{L+1}$ is a $\epsilon$-approximate median, we should ensure $(L+1/2)n_i-Ln_i\le \epsilon n$, indicating $$n_i\le 2\epsilon n.$$ 
+So, $n/(2L+1)\le 2\epsilon n$ and $L=\lceil\frac{1}{4\epsilon}\rceil$ is fine. 
+
+Finally, the probability that each of $2L$ quantiles expect for the median quantiles $Q_{L+1}$ has more than $(1+t)Lb$ points in $S'$ is $p_t\le 2Lp=4L\exp(-b/(3L^2))$. To ensure $p_t\le \delta$, we have $b\ge 3L^2\ln(4L/\delta)$. Therefore, the required number of points to be sampled is $$|S'|=(2L+1)b=3L^2(2L+1)\ln(4L/\delta),$$
+which is $O((1/\epsilon)^3(\ln(1/\epsilon)+\ln(1/\delta)))$.
+
+When there is a pairwise independent hash function with $h_{a,b}=ax+b\mod p$, the close points are often mapped into different hash buckets. So, we can choose a hash bucket which contains the most number of points and use the points in it as $S'$.
+\end{document}
+

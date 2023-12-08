@@ -1,2 +1,7 @@
 
 ~$FPT.pptx
+*.aux
+*.bbl
+*.blg
+*.log
+*.gz

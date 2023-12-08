@@ -1,0 +1,113 @@
+\documentclass[12pt,onecolumn,a4paper]{article}
+%landscape：横排
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{CJKutf8}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{graphicx} 
+\usepackage{natbib}
+\usepackage{caption}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{booktabs}
+
+%\usepackage{times}
+
+\usepackage[justification=centering]{caption}%图片标题居中
+
+%\usepackage{algorithm}  
+%\usepackage{algorithmicx}  
+%\usepackage{algpseudocode} 
+
+\usepackage[vlined,ruled]{algorithm2e}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{hyperref}
+%\hypersetup{
+%	colorlinks=true,
+%	linkcolor=cyan,
+%	filecolor=blue,      
+%	urlcolor=red,
+%	citecolor=green,
+%}
+
+%\floatname{algorithm}{Algorithm} 
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}  
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+
+\newtheorem{definition}{定义}[section]
+\newtheorem{proof}{Proof}
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{question}{Question}[section]
+\newtheorem{Symbol}{Symbol}[section]
+%\setlength{\parindent}{2em}
+\geometry{left=2cm,right=2cm,top=2.5cm,bottom=2.5cm}
+\def\cmt{\textcolor{blue}}
+\def\todo{\textcolor{red}}
+\def\cbl{\textcolor{blue}}
+\newcommand{\DD}{\mathrm{\mathcal{D}}}
+\newcommand{\HH}{\mathrm{\mathcal{H}}}
+\newcommand{\aka}{\emph{a.k.a.}\xspace}
+\DeclareMathOperator{\E}{E}
+\title{\textbf{COMP 5711 - Advanced Algorithms} \ \textbf{Written Assignment \# 4}}
+\author{ZHAO, Xi \\12256508 \\xzhaoca@connect.ust.hk}
+%\date{Nov 2018}
+\begin{document}
+\maketitle
+
+%\section*{Amortized Analysis (CLRS Ch 17)}
+\subsection*{SKI}
+\subsubsection*{(a)}
+We adopt the break-even algorithm \footnote{\url{https://en.wikipedia.org/wiki/Ski_rental_problem}} to solve this problem: 
+I rent for $n-1$ days and buy skis on the morning of day $n$ if I am still up for skiing. If I have to stop skiing during the first $n-1$ days, it costs the same as what I would pay if one had known the number of days I would go skiing. If I have to stop skiing after day $n$, my cost is $(2n-1)$ dollars, which is at most as twice as what I would pay if I had known the number of days I would go skiing in advance. So, it achieves a competitive ratio of at most $2$.
+
+\subsubsection*{(b)}
+Consider an adversary that knows the deterministic strategy and chooses the number of days to ski accordingly. If the strategy always rents for $k$ days before buying, the adversary can choose to ski for $k+1$ days and then stop, forcing the strategy to rent for $k$ days and then buy a ski, which costs $k+n$ dollars. When $k<n-1$, \textsf{OPT}$=k+1$, 
+$$\frac{k+n}{k+1}=1+\frac{n-1}{k+1}>1+\frac{n-1}{n}=2-1/n.$$
+When $k\ge n-1$, \textsf{OPT}$=n$, 
+$$\frac{k+n}{n}=1+\frac{k}{n}\ge 2-1/n.$$
+
+So, no deterministic strategy can achieve a competitive ratio better than $2-1/n$.
+
+\subsubsection*{(c)}
+Since $n$ is an even number, let $n=2k$ and $q=1-1/k (q<1)$. We rent the ski until day $n/2=k$. Then with the probability $p_i=\alpha q^{2k-i}$ we buy the ski on the morning of day $i$ if I am still up for skiing; otherwise we continue to rent until day $i$.
+Here $\sum_{i=k+1}^{2k} p_i=1$ and thus 
+\begin{equation*}
+	\alpha=\frac{1}{\sum_{i=k+1}^{2k} q^{2k-i}}=\frac{1-q}{1-q^k}.
+\end{equation*}
+When we buy the ski in the day $i$, the competitive ratio is at most $\frac{n+i-1}{n}<1+i/n$ based on the results in (a) and (b). Therefore, the competitive ratio in expectation is at most
+\begin{equation*}
+	\begin{split}
+		E<&\sum_{i=k+1}^{2k} (1+i/n)p_i\\
+		=&3/2+\frac{1-q}{2k(1-q^k)}\cdot\frac{kq}{1-q}\\
+		=&3/2+\frac{q}{2(1-q^k)}\\
+		<&3/2+q/2=2-1/n.
+	\end{split}
+\end{equation*}
+So, we obtain a better competitive ratio.
+%\begin{equation*}
+%	E=\sum_{i=k+1}^{2k} (1+i/n)p_i=
+%\end{equation*}
+\subsection*{MG}
+\subsubsection*{(a)}
+After counting $N$ items, there are at most  $N-M$ decrements. So, at most $(N-M)/(k+1)$ decrements on each unique key, indicating the error is at most $(N-M)/(k+1)$.
+\subsubsection*{(b)}
+Denote $f_i'$ as the counter value of the i-th most frequent item . We have $f_i'\ge f_i-(N-M)/(k+1),1\ge i\ge t$. So,
+\begin{equation}\label{eq:1}
+	M\ge \sum_{i=1}^{t} f_i'\ge \sum_{i=1}^{t} (f_i-\frac{N-M}{k+1})=\sum_{i=1}^{t} f_i-\frac{t(N-M)}{k+1}
+\end{equation}
+According to Eq. \ref{eq:1},
+\begin{equation}\label{eq:2}
+	N-M\le N-\sum_{i=1}^{t} f_i+\frac{t(N-M)}{k+1}=N^{res(t)}+\frac{t(N-M)}{k+1}.
+\end{equation}
+So, $(N-M)/(k+1)\le N^{res(t)}/(k+1-t)$. Proven!
+\subsection*{Parallel}
+%We add an element $1$ in the end of $A$ to avoid that there is no $1$ in $A$ and denote the 
+Since we can obtain the location of the first 1 by comparing each element once in $A$, where each comparison takes $O(1)$ times. Therefore, like the prefix sum problem, this problem can be simulated by a circuit of depth $D=O(\log n)$ and work $O(n)$. When there are $p=O(n)$ processors, according to the Brent's theorem, the running time can be $O(W/p+D)=O(\log n)$.
+
+\end{document}
+
